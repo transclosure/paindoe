@@ -1,0 +1,107 @@
+<html>
+<body>
+	<div id='background'></div>
+	<div id='foreground'></div>
+</body>
+<script type='text/javascript'>
+	var background = document.getElementById('background')
+	var x,y
+	var w = 4
+	var h = 4
+	for(y=h;y>0;y--) { for(x=0;x<w;x++) { 
+		var xoff = 320/2
+		var doff = 320/4
+		var yoff = 320/8
+		var xpos = (xoff*x)-doff
+		var ypos = (yoff*y*2)-doff
+
+		var white = document.createElement('img')
+		white.src = 'ground_tile_porous1.png'
+		white.style = 'position:fixed;left:'+(xpos)+';bottom:'+(ypos)+';'
+
+		var up = document.createElement('img')
+		up.src = 'ground_tile_porous1.png'
+		up.style = 'position:fixed;left:'+(xpos+doff)+';bottom:'+(ypos+yoff)+';'
+		
+		background.appendChild(up)
+		background.appendChild(white)
+	}}
+	
+	var foreground = document.getElementById('foreground')
+	var state = new Set()
+	var player = document.createElement('img')
+	player.src = 's.png'
+	player.style = 'height:320px;position:fixed;left:280px;bottom:230px;'
+	foreground.appendChild(player)
+
+	document.addEventListener('keydown', keyadd)
+	document.addEventListener('keyup', keyrem)
+	function keyadd(e) {
+  		state.add(e.key)
+		tick()
+	}
+	function keyrem(e) {
+		state.delete(e.key)
+		tick()
+	}
+	function tick() {
+		var prime = new Set(state)
+		for(let s of state.keys()) {
+			switch(s) {
+				case "w":
+					prime.delete("s")
+					break
+				case "a":
+					prime.delete("d")
+					break
+				case "s":
+					prime.delete("w")
+					break
+				case "d":
+					prime.delete("a")
+					break
+			}
+		}
+		if(prime.has("w") & prime.has("a")) {
+			player.src = 'wa.png'
+		}
+		else if(prime.has("w") & prime.has("d")) {
+			player.src = 'wd.png'
+		}
+		else if(prime.has("a") & prime.has("s")) {
+			player.src = 'as.png'
+		}
+		else if(prime.has("s") & prime.has("d")) {
+			player.src = 'sd.png'
+		}
+		else if(prime.has("w")) {
+			player.src = 'w.png'
+		}
+		else if(prime.has("a")) {
+			player.src = 'a.png'
+		}
+		else if(prime.has("s")) {
+			player.src = 's.png'
+		}
+		else if(prime.has("d")) {
+			player.src = 'd.png'
+		}
+		else {
+			console.log(prime)
+		}
+
+		if(prime.has("w")) {
+			player.style.bottom = parseInt(player.style.bottom)+20
+		}
+		if(prime.has("a")) {
+			player.style.left = parseInt(player.style.left)-40
+		}
+		if(prime.has("s")) {
+			player.style.bottom = parseInt(player.style.bottom)-20
+		}
+		if(prime.has("d")) {
+			player.style.left = parseInt(player.style.left)+40
+		}
+	}
+</script>
+</html>
